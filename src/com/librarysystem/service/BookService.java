@@ -12,6 +12,11 @@ public class BookService {
         this.library = library;
     }
 
+    // Alternative constructor that uses Singleton Library
+    public BookService() {
+        this.library = Library.getInstance();
+    }
+
     public void addBook(Book book) {
         library.addBook(book);
     }

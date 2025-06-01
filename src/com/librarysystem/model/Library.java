@@ -3,12 +3,29 @@ package com.librarysystem.model;
 import java.util.*;
 
 public class Library {
+    // Singleton instance
+    private static Library instance;
+    private static final Object lock = new Object();
+
     private List<Book> books;
     private List<Reader> readers;
 
-    public Library() {
+    // Private constructor to prevent instantiation
+    private Library() {
         books = new ArrayList<>();
         readers = new ArrayList<>();
+    }
+
+    // Thread-safe Singleton getInstance method
+    public static Library getInstance() {
+        if (instance == null) {
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new Library();
+                }
+            }
+        }
+        return instance;
     }
 
     public void addBook(Book book) {

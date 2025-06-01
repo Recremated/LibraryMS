@@ -9,8 +9,27 @@ import java.util.List;
 import java.util.Map;
 
 public class DataManager {
+    // Singleton instance
+    private static DataManager instance;
+    private static final Object lock = new Object();
 
-    public static void saveBooks(List<Book> books, String filename) {
+    // Private constructor to prevent instantiation
+    private DataManager() {
+    }
+
+    // Thread-safe Singleton getInstance method
+    public static DataManager getInstance() {
+        if (instance == null) {
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new DataManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void saveBooks(List<Book> books, String filename) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(books);
         } catch (IOException e) {
@@ -18,7 +37,7 @@ public class DataManager {
         }
     }
 
-    public static List<Book> loadBooks(String filename) {
+    public List<Book> loadBooks(String filename) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             return (List<Book>) ois.readObject();
         } catch (Exception e) {
@@ -27,7 +46,7 @@ public class DataManager {
         }
     }
 
-    public static void saveMembers(Map<Integer, MemberRecord> members, String filename) {
+    public void saveMembers(Map<Integer, MemberRecord> members, String filename) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(members);
         } catch (IOException e) {
@@ -35,7 +54,7 @@ public class DataManager {
         }
     }
 
-    public static Map<Integer, MemberRecord> loadMembers(String filename) {
+    public Map<Integer, MemberRecord> loadMembers(String filename) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             return (Map<Integer, MemberRecord>) ois.readObject();
         } catch (Exception e) {
