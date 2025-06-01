@@ -7,7 +7,7 @@ public class MemberRecord implements Serializable {
     private int memberId;
     private String type; // Student or Faculty
     private String dateOfMembership;
-    private int maxBookLimit = 5;
+    protected int maxBookLimit = 5; // Made protected for inheritance
     private int booksIssued = 0;
     private String name;
     private String address;
@@ -34,13 +34,31 @@ public class MemberRecord implements Serializable {
         if (booksIssued > 0) booksIssued--;
     }
 
+    // Getters
     public int getBooksIssued() { return booksIssued; }
+    public Integer getMemberId() { return memberId; }
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public String getDateOfMembership() { return dateOfMembership; }
+    public String getAddress() { return address; }
+    public String getPhoneNo() { return phoneNo; }
+    public int getMaxBookLimit() { return maxBookLimit; }
 
-    public Integer getMemberId() {
-        return memberId;
-    }
+    // Setters
+    public void setMaxBookLimit(int maxBookLimit) { this.maxBookLimit = maxBookLimit; }
+    public void setName(String name) { this.name = name; }
+    public void setAddress(String address) { this.address = address; }
+    public void setPhoneNo(String phoneNo) { this.phoneNo = phoneNo; }
 
-    public String getName() {
-        return name;
+    // Display method that can be overridden
+    public void displayMemberInfo() {
+        System.out.println("=== Member Information ===");
+        System.out.println("Member ID: " + memberId);
+        System.out.println("Name: " + name);
+        System.out.println("Type: " + type);
+        System.out.println("Membership Date: " + dateOfMembership);
+        System.out.println("Address: " + address);
+        System.out.println("Phone: " + phoneNo);
+        System.out.println("Books Issued: " + booksIssued + "/" + maxBookLimit);
     }
 }

@@ -113,7 +113,127 @@ public class HandlerUtils {
         bookService.removeBookById(id);
     }
 
-    // ---------- yardımcılar ----------
+
+    // New method for registering students
+    public static void registerStudent(MemberService memberService) {
+        System.out.println("\n-- Register New Student --");
+        int memberId = getInt("Enter member ID: ");
+        String name = getString("Enter name: ");
+        String date = getString("Enter membership date (YYYY-MM-DD): ");
+        String address = getString("Enter address: ");
+        String phone = getString("Enter phone: ");
+        String studentId = getString("Enter student ID: ");
+        String department = getString("Enter department: ");
+        int semester = getInt("Enter semester: ");
+        String degree = getString("Enter degree (Bachelor/Master/PhD): ");
+
+        Student student = new Student(memberId, name, date, address, phone,
+                studentId, department, semester, degree);
+        memberService.registerStudent(student);
+    }
+
+    // New method for registering faculty
+    public static void registerFaculty(MemberService memberService) {
+        System.out.println("\n-- Register New Faculty --");
+        int memberId = getInt("Enter member ID: ");
+        String name = getString("Enter name: ");
+        String date = getString("Enter membership date (YYYY-MM-DD): ");
+        String address = getString("Enter address: ");
+        String phone = getString("Enter phone: ");
+        String employeeId = getString("Enter employee ID: ");
+        String department = getString("Enter department: ");
+        String position = getString("Enter position (Professor/Associate Professor/Assistant Professor/Lecturer): ");
+        String specialization = getString("Enter specialization: ");
+        int experience = getInt("Enter years of experience: ");
+
+        Faculty faculty = new Faculty(memberId, name, date, address, phone,
+                employeeId, department, position, specialization, experience);
+        memberService.registerFaculty(faculty);
+    }
+    // Enhanced member registration with type selection
+    public static void registerMemberWithType(MemberService memberService) {
+        System.out.println("\n-- Register New Member --");
+        System.out.println("1. Student");
+        System.out.println("2. Faculty");
+        System.out.println("3. General Member");
+
+        int choice = getInt("Choose member type: ");
+
+        switch (choice) {
+            case 1 -> registerStudent(memberService);
+            case 2 -> registerFaculty(memberService);
+            case 3 -> registerGeneralMember(memberService);
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    private static void registerGeneralMember(MemberService memberService) {
+        System.out.println("\n-- Register General Member --");
+        int id = getInt("Enter member ID: ");
+        String name = getString("Enter name: ");
+        String type = getString("Enter type: ");
+        String date = getString("Enter membership date (YYYY-MM-DD): ");
+        String address = getString("Enter address: ");
+        String phone = getString("Enter phone: ");
+
+        MemberRecord member = new MemberRecord(id, name, type, date, address, phone);
+        memberService.registerMember(member);
+    }
+
+    // Enhanced borrow book with member type specific features
+    public static void borrowBookEnhanced(Library library, BookService bookService,
+                                          MemberService memberService, Librarian librarian) {
+        System.out.println("\n-- Borrow Book --");
+        int memberId = getInt("Enter member ID: ");
+        MemberRecord member = memberService.getMember(memberId);
+        if (member == null) {
+            System.out.println("Member not found.");
+            return;
+        }
+
+        String bookId = getString("Enter book ID: ");
+        Book book = bookService.findBookById(bookId);
+        if (book == null) {
+            System.out.println("Book not found.");
+            return;
+        }
+
+        Reader reader = new Reader(member.getName(), memberId);
+
+        // Check member type specific rules
+        if (member instanceof Faculty) {
+            Faculty faculty = (Faculty) member;
+            System.out.println("Faculty member detected. Enhanced privileges apply.");
+            if (faculty.canReserveBooks()) {
+                System.out.println("✅ Book reservation available if needed.");
+            }
+        } else if (member instanceof Student) {
+            Student student = (Student) member;
+            if (student.isEligibleForExtendedLoan()) {
+                System.out.println("✅ Extended loan period available for PhD student.");
+            }
+        }
+
+        librarian.issueBook(book, reader, member);
+        librarian.createBill(book, reader);
+    }
+
+    // List members by type
+    public static void listMembersByType(MemberService memberService) {
+        System.out.println("\n-- List Members by Type --");
+        System.out.println("1. Students");
+        System.out.println("2. Faculty");
+
+        int choice = getInt("Choose type to list: ");
+
+        switch (choice) {
+            case 1 -> memberService.listAllStudents();
+            case 2 -> memberService.listAllFaculty();
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    // Existing utility methods...
     private static String getString(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
