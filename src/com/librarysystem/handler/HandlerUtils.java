@@ -14,7 +14,6 @@ public class HandlerUtils {
         System.out.println("\n-- Add Book --");
         String id = getString("Enter book ID: ");
 
-        // ID duplicate kontrolü
         if (bookService.findBookById(id) != null) {
             System.out.println("❌ Book ID already exists!");
             return;
@@ -22,11 +21,10 @@ public class HandlerUtils {
 
         String title = getString("Enter title: ");
         String author = getString("Enter author: ");
-        double price = getValidPrice("Enter price: "); // Validation eklendi
+        double price = getValidPrice("Enter price: ");
         int edition = getInt("Enter edition: ");
         LocalDate date = LocalDate.now();
 
-        // Kategori seçimi eklendi
         System.out.println("Select book category:");
         System.out.println("1. Study Books");
         System.out.println("2. Journals");
@@ -47,19 +45,84 @@ public class HandlerUtils {
         bookService.addBook(book);
     }
 
-    public static void searchBookByID(BookService bookService) {
-        System.out.println("\n-- Search Book by ID --");
-        String id = getString("Enter book ID: ");
-        Book book = bookService.findBookById(id);
-        if (book != null) book.display();
-        else System.out.println("Book not found.");
-    }
-
+    // HATA DÜZELTİLDİ: Çift registration methodları kaldırıldı
     public static void registerMember(MemberService memberService) {
         System.out.println("\n-- Register New Member --");
-        int id = getInt("Enter member ID: ");
+        System.out.println("1. Student");
+        System.out.println("2. Faculty");
+        System.out.println("3. General Member");
+
+        int choice = getInt("Choose member type: ");
+
+        switch (choice) {
+            case 1 -> registerStudent(memberService);
+            case 2 -> registerFaculty(memberService);
+            case 3 -> registerGeneralMember(memberService);
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    public static void registerStudent(MemberService memberService) {
+        System.out.println("\n-- Register New Student --");
+        int memberId = getInt("Enter member ID: ");
+
+        // HATA DÜZELTİLDİ: ID kontrolü eklendi
+        if (memberService.getMember(memberId) != null) {
+            System.out.println("❌ Member ID already exists!");
+            return;
+        }
+
         String name = getString("Enter name: ");
-        String type = getString("Enter type (Student/Faculty): ");
+        String date = getString("Enter membership date (YYYY-MM-DD): ");
+        String address = getString("Enter address: ");
+        String phone = getString("Enter phone: ");
+        String studentId = getString("Enter student ID: ");
+        String department = getString("Enter department: ");
+        int semester = getInt("Enter semester: ");
+        String degree = getString("Enter degree (Bachelor/Master/PhD): ");
+
+        Student student = new Student(memberId, name, date, address, phone,
+                studentId, department, semester, degree);
+        memberService.registerStudent(student);
+    }
+
+    public static void registerFaculty(MemberService memberService) {
+        System.out.println("\n-- Register New Faculty --");
+        int memberId = getInt("Enter member ID: ");
+
+        // HATA DÜZELTİLDİ: ID kontrolü eklendi
+        if (memberService.getMember(memberId) != null) {
+            System.out.println("❌ Member ID already exists!");
+            return;
+        }
+
+        String name = getString("Enter name: ");
+        String date = getString("Enter membership date (YYYY-MM-DD): ");
+        String address = getString("Enter address: ");
+        String phone = getString("Enter phone: ");
+        String employeeId = getString("Enter employee ID: ");
+        String department = getString("Enter department: ");
+        String position = getString("Enter position: ");
+        String specialization = getString("Enter specialization: ");
+        int experience = getInt("Enter years of experience: ");
+
+        Faculty faculty = new Faculty(memberId, name, date, address, phone,
+                employeeId, department, position, specialization, experience);
+        memberService.registerFaculty(faculty);
+    }
+
+    private static void registerGeneralMember(MemberService memberService) {
+        System.out.println("\n-- Register General Member --");
+        int id = getInt("Enter member ID: ");
+
+        // HATA DÜZELTİLDİ: ID kontrolü eklendi
+        if (memberService.getMember(id) != null) {
+            System.out.println("❌ Member ID already exists!");
+            return;
+        }
+
+        String name = getString("Enter name: ");
+        String type = getString("Enter type: ");
         String date = getString("Enter membership date (YYYY-MM-DD): ");
         String address = getString("Enter address: ");
         String phone = getString("Enter phone: ");
@@ -68,46 +131,125 @@ public class HandlerUtils {
         memberService.registerMember(member);
     }
 
-    public static void borrowBook(Library library, BookService bookService, MemberService memberService, Librarian librarian) {
+    // HATA DÜZELTİLDİ: Tek borrow method yeterli
+    public static void borrowBook(Library library, BookService bookService,
+                                  MemberService memberService, Librarian librarian) {
         System.out.println("\n-- Borrow Book --");
         int memberId = getInt("Enter member ID: ");
         MemberRecord member = memberService.getMember(memberId);
         if (member == null) {
-            System.out.println("Member not found.");
+            System.out.println("❌ Member not found.");
             return;
         }
 
         String bookId = getString("Enter book ID: ");
         Book book = bookService.findBookById(bookId);
         if (book == null) {
-            System.out.println("Book not found.");
+            System.out.println("❌ Book not found.");
             return;
         }
 
         Reader reader = new Reader(member.getName(), memberId);
+
+        // Özel member tiplerinin avantajlarını göster
+        displayMemberAdvantages(member);
+
         librarian.issueBook(book, reader, member);
         librarian.createBill(book, reader);
     }
 
-    public static void returnBook(Library library, BookService bookService, MemberService memberService, Librarian librarian) {
+    private static void displayMemberAdvantages(MemberRecord member) {
+        if (member instanceof Faculty faculty) {
+            System.out.println("🎓 Faculty privileges:");
+            System.out.println("- Book limit: " + faculty.getMaxBookLimit());
+            if (faculty.canReserveBooks()) {
+                System.out.println("- Can reserve books");
+            }
+            if (faculty.getFineExemptionRate() > 0) {
+                System.out.printf("- Fine exemption: %.0f%%\n", faculty.getFineExemptionRate() * 100);
+            }
+        } else if (member instanceof Student student) {
+            System.out.println("📚 Student privileges:");
+            if (student.isEligibleForExtendedLoan()) {
+                System.out.println("- Extended loan period (PhD student)");
+            }
+            System.out.printf("- Fine discount: %.0f%%\n", student.getDiscountRate() * 100);
+        }
+    }
+
+    // Diğer method'lar aynı kalacak...
+    public static void returnBook(Library library, BookService bookService,
+                                  MemberService memberService, Librarian librarian) {
         System.out.println("\n-- Return Book --");
         int memberId = getInt("Enter member ID: ");
         MemberRecord member = memberService.getMember(memberId);
         if (member == null) {
-            System.out.println("Member not found.");
+            System.out.println("❌ Member not found.");
             return;
         }
 
         String bookId = getString("Enter book ID: ");
         Book book = bookService.findBookById(bookId);
         if (book == null || book.getStatus().equals("Available")) {
-            System.out.println("Book is not borrowed.");
+            System.out.println("❌ Book is not borrowed.");
             return;
         }
 
         Reader reader = new Reader(member.getName(), memberId);
         librarian.returnBook(book, reader, member);
         librarian.refund(book, reader);
+    }
+
+    // Utility methods - aynı kalacak
+    private static String getString(String prompt) {
+        System.out.print(prompt);
+        return scanner.nextLine().trim(); // trim eklendi
+    }
+
+    private static int getInt(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) {
+                    System.out.println("Input cannot be empty.");
+                    continue;
+                }
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Enter a valid number.");
+            }
+        }
+    }
+
+    private static double getValidPrice(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) {
+                    System.out.println("Input cannot be empty.");
+                    continue;
+                }
+                double price = Double.parseDouble(input);
+                if (price < 0) {
+                    System.out.println("Price cannot be negative.");
+                    continue;
+                }
+                return price;
+            } catch (NumberFormatException e) {
+                System.out.println("Enter a valid number.");
+            }
+        }
+    }
+
+    // Diğer gereksiz methodlar kaldırıldı
+    public static void searchBookByID(BookService bookService) {
+        System.out.println("\n-- Search Book by ID --");
+        String id = getString("Enter book ID: ");
+        Book book = bookService.findBookById(id);
+        if (book != null) book.display();
+        else System.out.println("❌ Book not found.");
     }
 
     public static void listBooksByAuthor(BookService bookService) {
@@ -128,176 +270,26 @@ public class HandlerUtils {
 
     public static void updateBook(BookService bookService) {
         String id = getString("Enter book ID: ");
-        double newPrice = getDouble("Enter new price: ");
+        Book book = bookService.findBookById(id);
+        if (book == null) {
+            System.out.println("❌ Book not found.");
+            return;
+        }
+        double newPrice = getValidPrice("Enter new price: ");
         bookService.updateBookPrice(id, newPrice);
     }
 
     public static void deleteBook(BookService bookService) {
         String id = getString("Enter book ID: ");
-        bookService.removeBookById(id);
-    }
-
-
-    // New method for registering students
-    public static void registerStudent(MemberService memberService) {
-        System.out.println("\n-- Register New Student --");
-        int memberId = getInt("Enter member ID: ");
-        String name = getString("Enter name: ");
-        String date = getString("Enter membership date (YYYY-MM-DD): ");
-        String address = getString("Enter address: ");
-        String phone = getString("Enter phone: ");
-        String studentId = getString("Enter student ID: ");
-        String department = getString("Enter department: ");
-        int semester = getInt("Enter semester: ");
-        String degree = getString("Enter degree (Bachelor/Master/PhD): ");
-
-        Student student = new Student(memberId, name, date, address, phone,
-                studentId, department, semester, degree);
-        memberService.registerStudent(student);
-    }
-
-    // New method for registering faculty
-    public static void registerFaculty(MemberService memberService) {
-        System.out.println("\n-- Register New Faculty --");
-        int memberId = getInt("Enter member ID: ");
-        String name = getString("Enter name: ");
-        String date = getString("Enter membership date (YYYY-MM-DD): ");
-        String address = getString("Enter address: ");
-        String phone = getString("Enter phone: ");
-        String employeeId = getString("Enter employee ID: ");
-        String department = getString("Enter department: ");
-        String position = getString("Enter position (Professor/Associate Professor/Assistant Professor/Lecturer): ");
-        String specialization = getString("Enter specialization: ");
-        int experience = getInt("Enter years of experience: ");
-
-        Faculty faculty = new Faculty(memberId, name, date, address, phone,
-                employeeId, department, position, specialization, experience);
-        memberService.registerFaculty(faculty);
-    }
-    // Enhanced member registration with type selection
-    public static void registerMemberWithType(MemberService memberService) {
-        System.out.println("\n-- Register New Member --");
-        System.out.println("1. Student");
-        System.out.println("2. Faculty");
-        System.out.println("3. General Member");
-
-        int choice = getInt("Choose member type: ");
-
-        switch (choice) {
-            case 1 -> registerStudent(memberService);
-            case 2 -> registerFaculty(memberService);
-            case 3 -> registerGeneralMember(memberService);
-            default -> System.out.println("Invalid choice.");
-        }
-    }
-
-    private static void registerGeneralMember(MemberService memberService) {
-        System.out.println("\n-- Register General Member --");
-        int id = getInt("Enter member ID: ");
-        String name = getString("Enter name: ");
-        String type = getString("Enter type: ");
-        String date = getString("Enter membership date (YYYY-MM-DD): ");
-        String address = getString("Enter address: ");
-        String phone = getString("Enter phone: ");
-
-        MemberRecord member = new MemberRecord(id, name, type, date, address, phone);
-        memberService.registerMember(member);
-    }
-
-    // Enhanced borrow book with member type specific features
-    public static void borrowBookEnhanced(Library library, BookService bookService,
-                                          MemberService memberService, Librarian librarian) {
-        System.out.println("\n-- Borrow Book --");
-        int memberId = getInt("Enter member ID: ");
-        MemberRecord member = memberService.getMember(memberId);
-        if (member == null) {
-            System.out.println("Member not found.");
-            return;
-        }
-
-        String bookId = getString("Enter book ID: ");
-        Book book = bookService.findBookById(bookId);
+        Book book = bookService.findBookById(id);
         if (book == null) {
-            System.out.println("Book not found.");
+            System.out.println("❌ Book not found.");
             return;
         }
-
-        Reader reader = new Reader(member.getName(), memberId);
-
-        // Check member type specific rules
-        if (member instanceof Faculty) {
-            Faculty faculty = (Faculty) member;
-            System.out.println("Faculty member detected. Enhanced privileges apply.");
-            if (faculty.canReserveBooks()) {
-                System.out.println("✅ Book reservation available if needed.");
-            }
-        } else if (member instanceof Student) {
-            Student student = (Student) member;
-            if (student.isEligibleForExtendedLoan()) {
-                System.out.println("✅ Extended loan period available for PhD student.");
-            }
+        if (book.getStatus().equals("Borrowed")) {
+            System.out.println("❌ Cannot delete borrowed book.");
+            return;
         }
-
-        librarian.issueBook(book, reader, member);
-        librarian.createBill(book, reader);
-    }
-
-    // List members by type
-    public static void listMembersByType(MemberService memberService) {
-        System.out.println("\n-- List Members by Type --");
-        System.out.println("1. Students");
-        System.out.println("2. Faculty");
-
-        int choice = getInt("Choose type to list: ");
-
-        switch (choice) {
-            case 1 -> memberService.listAllStudents();
-            case 2 -> memberService.listAllFaculty();
-            default -> System.out.println("Invalid choice.");
-        }
-    }
-
-    // Existing utility methods...
-    private static String getString(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine();
-    }
-
-    private static int getInt(String prompt) {
-        while (true) {
-            try {
-                System.out.print(prompt);
-                return Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
-                System.out.println("Enter a valid number.");
-            }
-        }
-    }
-
-    private static double getDouble(String prompt) {
-        while (true) {
-            try {
-                System.out.print(prompt);
-                return Double.parseDouble(scanner.nextLine());
-            } catch (Exception e) {
-                System.out.println("Enter a valid number.");
-            }
-        }
-    }
-
-    private static double getValidPrice(String prompt) {
-        while (true) {
-            try {
-                System.out.print(prompt);
-                double price = Double.parseDouble(scanner.nextLine());
-                if (price < 0) {
-                    System.out.println("Price cannot be negative. Please enter a valid price.");
-                    continue;
-                }
-                return price;
-            } catch (Exception e) {
-                System.out.println("Enter a valid number.");
-            }
-        }
+        bookService.removeBookById(id);
     }
 }

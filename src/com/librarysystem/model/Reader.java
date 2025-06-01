@@ -6,7 +6,6 @@ import java.util.List;
 public class Reader extends Person {
     private List<Book> books;
     private int memberId;
-    private MemberRecord memberRecord; // Reference to member for limit checking
 
     public Reader(String name, int memberId) {
         super(name);
@@ -14,19 +13,9 @@ public class Reader extends Person {
         this.books = new ArrayList<>();
     }
 
-    // Set member record for limit checking
-    public void setMemberRecord(MemberRecord memberRecord) {
-        this.memberRecord = memberRecord;
-    }
-
+    // HATA DÜZELTİLDİ: Reader sadece kitap tutma işini yapmalı
+    // Limit kontrolü Librarian tarafından yapılmalı
     public void borrowBook(Book book) {
-        // Use member's actual limit instead of hardcoded 5
-        int limit = (memberRecord != null) ? memberRecord.getMaxBookLimit() : 5;
-
-        if (books.size() >= limit) {
-            System.out.println("Borrowing limit reached! Maximum: " + limit);
-            return;
-        }
         books.add(book);
         book.setStatus("Borrowed");
         System.out.println(name + " borrowed the book: " + book.getName());

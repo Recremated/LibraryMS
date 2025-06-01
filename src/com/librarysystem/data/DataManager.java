@@ -7,17 +7,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 public class DataManager {
-    // Singleton instance
     private static DataManager instance;
     private static final Object lock = new Object();
 
-    // Private constructor to prevent instantiation
-    private DataManager() {
-    }
+    private DataManager() {}
 
-    // Thread-safe Singleton getInstance method
     public static DataManager getInstance() {
         if (instance == null) {
             synchronized (lock) {
@@ -32,34 +29,58 @@ public class DataManager {
     public void saveBooks(List<Book> books, String filename) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(books);
+            System.out.println("✅ Books saved successfully.");
         } catch (IOException e) {
-            System.out.println("❌ Error saving books: " + e.getMessage());
+            System.err.println("❌ Error saving books: " + e.getMessage());
         }
     }
 
+    @SuppressWarnings("unchecked") // Suppressed for type casting
     public List<Book> loadBooks(String filename) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-            return (List<Book>) ois.readObject();
-        } catch (Exception e) {
-            System.out.println("📁 No saved books found, starting empty.");
+        File file = new File(filename);
+        if (!file.exists()) {
+            System.out.println("📁 No saved books found, starting with empty library.");
             return new ArrayList<>();
         }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            Object obj = ois.readObject();
+            if (obj instanceof List<?>) {
+                System.out.println("✅ Books loaded successfully.");
+                return (List<Book>) obj;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("❌ Error loading books: " + e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
     public void saveMembers(Map<Integer, MemberRecord> members, String filename) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(members);
+            System.out.println("✅ Members saved successfully.");
         } catch (IOException e) {
-            System.out.println("❌ Error saving members: " + e.getMessage());
+            System.err.println("❌ Error saving members: " + e.getMessage());
         }
     }
 
+    @SuppressWarnings("unchecked") // Suppressed for type casting
     public Map<Integer, MemberRecord> loadMembers(String filename) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-            return (Map<Integer, MemberRecord>) ois.readObject();
-        } catch (Exception e) {
-            System.out.println("📁 No saved members found, starting empty.");
-            return new java.util.HashMap<>();
+        File file = new File(filename);
+        if (!file.exists()) {
+            System.out.println("📁 No saved members found, starting with empty records.");
+            return new HashMap<>();
         }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            Object obj = ois.readObject();
+            if (obj instanceof Map<?, ?>) {
+                System.out.println("✅ Members loaded successfully.");
+                return (Map<Integer, MemberRecord>) obj;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("❌ Error loading members: " + e.getMessage());
+        }
+        return new HashMap<>();
     }
 }
