@@ -13,13 +13,37 @@ public class HandlerUtils {
     public static void addBook(BookService bookService) {
         System.out.println("\n-- Add Book --");
         String id = getString("Enter book ID: ");
+
+        // ID duplicate kontrolü
+        if (bookService.findBookById(id) != null) {
+            System.out.println("❌ Book ID already exists!");
+            return;
+        }
+
         String title = getString("Enter title: ");
         String author = getString("Enter author: ");
-        double price = getDouble("Enter price: ");
+        double price = getValidPrice("Enter price: "); // Validation eklendi
         int edition = getInt("Enter edition: ");
         LocalDate date = LocalDate.now();
 
-        Book book = new StudyBooks(id, author, title, price, edition, date);
+        // Kategori seçimi eklendi
+        System.out.println("Select book category:");
+        System.out.println("1. Study Books");
+        System.out.println("2. Journals");
+        System.out.println("3. Magazines");
+
+        int categoryChoice = getInt("Choose category (1-3): ");
+
+        Book book = switch (categoryChoice) {
+            case 1 -> new StudyBooks(id, author, title, price, edition, date);
+            case 2 -> new Journals(id, author, title, price, edition, date);
+            case 3 -> new Magazines(id, author, title, price, edition, date);
+            default -> {
+                System.out.println("Invalid choice, defaulting to Study Books");
+                yield new StudyBooks(id, author, title, price, edition, date);
+            }
+        };
+
         bookService.addBook(book);
     }
 
@@ -255,6 +279,22 @@ public class HandlerUtils {
             try {
                 System.out.print(prompt);
                 return Double.parseDouble(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("Enter a valid number.");
+            }
+        }
+    }
+
+    private static double getValidPrice(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                double price = Double.parseDouble(scanner.nextLine());
+                if (price < 0) {
+                    System.out.println("Price cannot be negative. Please enter a valid price.");
+                    continue;
+                }
+                return price;
             } catch (Exception e) {
                 System.out.println("Enter a valid number.");
             }
