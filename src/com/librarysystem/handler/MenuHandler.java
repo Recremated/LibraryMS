@@ -24,12 +24,15 @@ public class MenuHandler {
                 case 3 -> HandlerUtils.searchBookByID(bookService);
                 case 4 -> HandlerUtils.borrowBook(library, bookService, memberService, librarian);
                 case 5 -> HandlerUtils.returnBook(library, bookService, memberService, librarian);
-                case 6 -> HandlerUtils.registerMember(memberService); // DÜZELTME: Tek method
+                case 6 -> HandlerUtils.registerMember(memberService);
                 case 7 -> HandlerUtils.listBooksByAuthor(bookService);
                 case 8 -> HandlerUtils.listBooksByCategory(bookService);
                 case 9 -> HandlerUtils.updateBook(bookService);
                 case 10 -> HandlerUtils.deleteBook(bookService);
                 case 11 -> showMemberDetailsMenu(memberService);
+                case 12 -> HandlerUtils.listBorrowedBooks(bookService); // YENİ
+                case 13 -> HandlerUtils.showMemberBorrowedBooks(memberService); // YENİ
+                case 14 -> HandlerUtils.searchWhoHasBook(bookService); // YENİ
                 case 0 -> {
                     System.out.println("💾 Saving data and exiting... Bye!");
                     running = false;
@@ -40,9 +43,9 @@ public class MenuHandler {
     }
 
     private static void showMenu() {
-        System.out.println("\n" + "=".repeat(40));
-        System.out.println("    LIBRARY MANAGEMENT SYSTEM");
-        System.out.println("=".repeat(40));
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("        LIBRARY MANAGEMENT SYSTEM");
+        System.out.println("=".repeat(50));
         System.out.println("📚 BOOK OPERATIONS:");
         System.out.println("  1. Add New Book");
         System.out.println("  2. List All Books");
@@ -60,11 +63,15 @@ public class MenuHandler {
         System.out.println("  4. Borrow Book");
         System.out.println("  5. Return Book");
 
+        System.out.println("\n📊 BORROWING REPORTS:");
+        System.out.println("  12. List All Borrowed Books");
+        System.out.println("  13. Show Member's Borrowed Books");
+        System.out.println("  14. Check Who Has a Specific Book");
+
         System.out.println("\n  0. Exit");
-        System.out.println("=".repeat(40));
+        System.out.println("=".repeat(50));
     }
 
-    // DÜZELTME: Gereksiz alt menü kaldırıldı
     private static void showMemberDetailsMenu(MemberService memberService) {
         System.out.println("\n=== MEMBER DETAILS ===");
         System.out.println("1. Show Specific Member Details");

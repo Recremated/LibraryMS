@@ -5,6 +5,7 @@ import com.librarysystem.service.BookService;
 import com.librarysystem.service.MemberService;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 public class HandlerUtils {
@@ -291,5 +292,78 @@ public class HandlerUtils {
             return;
         }
         bookService.removeBookById(id);
+    }
+
+    // HandlerUtils.java'ya eklenecek yeni metodlar:
+
+    // Bu metodu HandlerUtils sınıfına ekleyin
+    public static void listBorrowedBooks(BookService bookService) {
+        System.out.println("\n=== BORROWED BOOKS ===");
+        List<Book> allBooks = Library.getInstance().getBooks();
+        boolean foundBorrowedBooks = false;
+
+        for (Book book : allBooks) {
+            if ("Borrowed".equals(book.getStatus())) {
+                book.display();
+                System.out.println("─".repeat(40));
+                foundBorrowedBooks = true;
+            }
+        }
+
+        if (!foundBorrowedBooks) {
+            System.out.println("📚 No books are currently borrowed.");
+        }
+    }
+
+    // Belirli bir üyenin aldığı kitapları göstermek için
+    public static void showMemberBorrowedBooks(MemberService memberService) {
+        System.out.println("\n=== MEMBER'S BORROWED BOOKS ===");
+        int memberId = getInt("Enter member ID: ");
+
+        MemberRecord member = memberService.getMember(memberId);
+        if (member == null) {
+            System.out.println("❌ Member not found.");
+            return;
+        }
+
+        System.out.println("📚 Books borrowed by " + member.getName() + ":");
+        List<Book> allBooks = Library.getInstance().getBooks();
+        boolean foundBooks = false;
+
+        for (Book book : allBooks) {
+            if ("Borrowed".equals(book.getStatus()) &&
+                    member.getMemberId().equals(book.getBorrowedByMemberId())) {
+                book.display();
+                System.out.println("─".repeat(40));
+                foundBooks = true;
+            }
+        }
+
+        if (!foundBooks) {
+            System.out.println("📚 " + member.getName() + " has no borrowed books.");
+        }
+    }
+
+    // Hangi kitabın hangi üye tarafından alındığını arama
+    public static void searchWhoHasBook(BookService bookService) {
+        System.out.println("\n=== WHO HAS THIS BOOK? ===");
+        String bookId = getString("Enter book ID: ");
+
+        Book book = bookService.findBookById(bookId);
+        if (book == null) {
+            System.out.println("❌ Book not found.");
+            return;
+        }
+
+        System.out.println("\n📖 Book: " + book.getName());
+        System.out.println("📊 Status: " + book.getStatus());
+
+        if ("Borrowed".equals(book.getStatus()) && book.getBorrowedByMemberId() != null) {
+            System.out.println("👤 Currently with: " + book.getBorrowedByMemberName() +
+                    " (ID: " + book.getBorrowedByMemberId() + ")");
+            System.out.println("📅 Borrowed on: " + book.getBorrowDate());
+        } else {
+            System.out.println("✅ This book is available in the library.");
+        }
     }
 }
