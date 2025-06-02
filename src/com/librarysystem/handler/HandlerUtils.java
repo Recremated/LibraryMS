@@ -132,7 +132,7 @@ public class HandlerUtils {
         memberService.registerMember(member);
     }
 
-    // HATA DÜZELTİLDİ: Tek borrow method yeterli
+    // Updated HandlerUtils.java - borrowBook method with enhanced validation
     public static void borrowBook(Library library, BookService bookService,
                                   MemberService memberService, Librarian librarian) {
         System.out.println("\n-- Borrow Book --");
@@ -150,11 +150,34 @@ public class HandlerUtils {
             return;
         }
 
+        // ENHANCED: Check if book is already borrowed with detailed message
+        if ("Borrowed".equals(book.getStatus())) {
+            System.out.println("❌ This book is already borrowed!");
+            System.out.println("📖 Book: " + book.getName());
+            if (book.getBorrowedByMemberName() != null) {
+                System.out.println("👤 Currently with: " + book.getBorrowedByMemberName() +
+                        " (ID: " + book.getBorrowedByMemberId() + ")");
+                System.out.println("📅 Borrowed on: " + book.getBorrowDate());
+            }
+            System.out.println("⏳ Please wait for the book to be returned before borrowing.");
+            return;
+        }
+
+        // Check if member can borrow more books
+        if (!member.canIssue()) {
+            System.out.println("❌ Member has reached the maximum book limit (" +
+                    member.getMaxBookLimit() + " books).");
+            System.out.println("📊 Currently borrowed: " + member.getBooksIssued() +
+                    "/" + member.getMaxBookLimit());
+            return;
+        }
+
         Reader reader = new Reader(member.getName(), memberId);
 
-        // Özel member tiplerinin avantajlarını göster
+        // Display member advantages
         displayMemberAdvantages(member);
 
+        // Issue the book
         librarian.issueBook(book, reader, member);
         librarian.createBill(book, reader);
     }
@@ -364,6 +387,48 @@ public class HandlerUtils {
             System.out.println("📅 Borrowed on: " + book.getBorrowDate());
         } else {
             System.out.println("✅ This book is available in the library.");
+        }
+    }
+    // Additional utility method to check book availability
+    public static boolean isBookAvailable(Book book) {
+        return book != null && "Available".equals(book.getStatus());
+    }
+
+    // Method to get detailed book status
+    public static void showBookStatus(Book book) {
+        if (book == null) {
+            System.out.println("❌ Book not found.");
+            return;
+        }
+
+        System.out.println("\n📚 Book Status Information:");
+        System.out.println("📖 Title: " + book.getName());
+        System.out.println("🆔 Book ID: " + book.getBookID());
+        System.out.println("👨‍💼 Author: " + book.getAuthor());
+        System.out.println("📊 Status: " + book.getStatus());
+
+        if ("Borrowed".equals(book.getStatus())) {
+            System.out.println("🚫 This book is currently unavailable");
+            if (book.getBorrowedByMemberName() != null) {
+                System.out.println("👤 Borrowed by: " + book.getBorrowedByMemberName());
+                System.out.println("🆔 Member ID: " + book.getBorrowedByMemberId());
+                System.out.println("📅 Borrow Date: " + book.getBorrowDate());
+            }
+        } else {
+            System.out.println("✅ This book is available for borrowing");
+        }
+    }
+
+    // Enhanced search method with availability check
+    public static void searchBookWithAvailability(BookService bookService) {
+        System.out.println("\n-- Search Book with Availability --");
+        String id = getString("Enter book ID: ");
+        Book book = bookService.findBookById(id);
+
+        if (book != null) {
+            showBookStatus(book);
+        } else {
+            System.out.println("❌ Book not found with ID: " + id);
         }
     }
 }

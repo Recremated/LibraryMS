@@ -13,19 +13,31 @@ public class Librarian {
         return member.canIssue();
     }
 
+    // Updated Librarian.java - issueBook method with better validation
     public void issueBook(Book book, Reader reader, MemberRecord record) {
+        // Double-check member eligibility
         if (!verifyMember(record)) {
-            System.out.println("Member has reached the book limit.");
+            System.out.println("❌ Member has reached the book limit (" +
+                    record.getMaxBookLimit() + " books).");
             return;
         }
-        if (book.getStatus().equals("Borrowed")) {
-            System.out.println("Book is already borrowed.");
+
+        // Double-check book availability
+        if ("Borrowed".equals(book.getStatus())) {
+            System.out.println("❌ Book is already borrowed by " +
+                    book.getBorrowedByMemberName() +
+                    " (ID: " + book.getBorrowedByMemberId() + ")");
             return;
         }
+
+        // Issue the book
         reader.borrowBook(book);
         record.issueBook();
-        System.out.println("Book issued to " + reader.getName());
+        System.out.println("✅ Book successfully issued to " + reader.getName());
+        System.out.println("📖 Book: " + book.getName());
+        System.out.println("📅 Issue Date: " + book.getBorrowDate());
     }
+
 
     public void returnBook(Book book, Reader reader, MemberRecord record) {
         reader.returnBook(book);

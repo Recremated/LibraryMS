@@ -46,20 +46,36 @@ public class BookService {
         if (books.isEmpty()) {
             System.out.println("No books found for author: " + authorName);
         } else {
-            books.forEach(Book::display);
+            System.out.println("\n📚 Books by " + authorName + ":");
+            books.forEach(book -> {
+                book.display();
+                System.out.println("─".repeat(40));
+            });
         }
     }
 
     public void listBooksByCategory(Class<? extends Book> categoryClass) {
+        System.out.println("\n📚 Books in category: " + categoryClass.getSimpleName());
+        boolean found = false;
         for (Book book : library.getBooks()) {
             if (categoryClass.isInstance(book)) {
                 book.display();
+                System.out.println("─".repeat(40));
+                found = true;
             }
+        }
+        if (!found) {
+            System.out.println("No books found in this category.");
         }
     }
 
     public void listAllBooks() {
-        library.displayAllBooks();
+        if (library.getBooks().isEmpty()) {
+            System.out.println("📚 No books in the library.");
+        } else {
+            System.out.println("\n📚 ALL BOOKS IN LIBRARY:");
+            library.displayAllBooks();
+        }
     }
 
     public Book findBookById(String bookID) {

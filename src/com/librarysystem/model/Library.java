@@ -47,7 +47,7 @@ public class Library {
     public List<Book> searchBooksByAuthor(String authorName) {
         List<Book> result = new ArrayList<>();
         for (Book book : books) {
-            if (book.getAuthor().equalsIgnoreCase(authorName)) {
+            if (book.getAuthor().getName().equalsIgnoreCase(authorName)) { // Author nesnesini kullan
                 result.add(book);
             }
         }
@@ -83,16 +83,27 @@ public class Library {
         }
     }
 
+    // Updated Library.java - lendBook method with enhanced validation
     public void lendBook(Book book, Reader reader) {
         if (!books.contains(book)) {
-            System.out.println("Book not in library.");
+            System.out.println("❌ Book not found in library inventory.");
             return;
         }
-        if (book.getStatus().equals("Borrowed")) {
-            System.out.println("Book is already borrowed.");
+
+        if ("Borrowed".equals(book.getStatus())) {
+            System.out.println("❌ Book is already borrowed!");
+            System.out.println("📖 Book: " + book.getName() + " (ID: " + book.getBookID() + ")");
+            if (book.getBorrowedByMemberName() != null) {
+                System.out.println("👤 Currently with: " + book.getBorrowedByMemberName() +
+                        " (ID: " + book.getBorrowedByMemberId() + ")");
+                System.out.println("📅 Borrowed since: " + book.getBorrowDate());
+            }
             return;
         }
+
+        // Proceed with borrowing
         reader.borrowBook(book);
+        System.out.println("✅ Book successfully lent to " + reader.getName());
     }
 
     public void takeBackBook(Book book, Reader reader) {

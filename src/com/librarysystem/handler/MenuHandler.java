@@ -33,6 +33,8 @@ public class MenuHandler {
                 case 12 -> HandlerUtils.listBorrowedBooks(bookService); // YENİ
                 case 13 -> HandlerUtils.showMemberBorrowedBooks(memberService); // YENİ
                 case 14 -> HandlerUtils.searchWhoHasBook(bookService); // YENİ
+                case 15 -> HandlerUtils.searchBookWithAvailability(bookService); // NEW CASE
+
                 case 0 -> {
                     System.out.println("💾 Saving data and exiting... Bye!");
                     running = false;
@@ -54,6 +56,7 @@ public class MenuHandler {
         System.out.println("  8. List Books by Category");
         System.out.println("  9. Update Book Price");
         System.out.println("  10. Delete Book");
+        System.out.println("  15. Check Book Availability"); // NEW OPTION
 
         System.out.println("\n👥 MEMBER OPERATIONS:");
         System.out.println("  6. Register New Member");
@@ -67,6 +70,7 @@ public class MenuHandler {
         System.out.println("  12. List All Borrowed Books");
         System.out.println("  13. Show Member's Borrowed Books");
         System.out.println("  14. Check Who Has a Specific Book");
+
 
         System.out.println("\n  0. Exit");
         System.out.println("=".repeat(50));
