@@ -20,16 +20,6 @@ public class Student extends MemberRecord {
 
     // Getters and Setters
     public String getStudentId() { return studentId; }
-    public void setStudentId(String studentId) { this.studentId = studentId; }
-
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
-
-    public int getSemester() { return semester; }
-    public void setSemester(int semester) { this.semester = semester; }
-
-    public String getDegree() { return degree; }
-    public void setDegree(String degree) { this.degree = degree; }
 
     @Override
     public void displayMemberInfo() {

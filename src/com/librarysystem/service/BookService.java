@@ -12,11 +12,6 @@ public class BookService {
         this.library = library;
     }
 
-    // Alternative constructor that uses Singleton Library
-    public BookService() {
-        this.library = Library.getInstance();
-    }
-
     public void addBook(Book book) {
         library.addBook(book);
     }
@@ -82,7 +77,4 @@ public class BookService {
         return library.searchBookByID(bookID);
     }
 
-    public List<Book> searchBooksByTitle(String title) {
-        return library.searchBooksByTitle(title);
-    }
 }

@@ -37,28 +37,15 @@ public abstract class Book implements Serializable {
     // Getter'lar
     public String getBookID() { return bookID; }
     public Author getAuthor() { return author; }
-    public String getAuthorName() { return author.getName(); } // Geriye uyumluluk için
     public String getName() { return name; }
     public double getPrice() { return price; }
     public String getStatus() { return status; }
-    public int getEdition() { return edition; }
-    public LocalDate getDateOfPurchase() { return dateOfPurchase; }
     public Integer getBorrowedByMemberId() { return borrowedByMemberId; }
     public String getBorrowedByMemberName() { return borrowedByMemberName; }
     public LocalDate getBorrowDate() { return borrowDate; }
 
     // Setter'lar
-    public void setStatus(String status) { this.status = status; }
     public void setPrice(double price) { this.price = price; }
-    public void setBorrowedByMemberId(Integer borrowedByMemberId) {
-        this.borrowedByMemberId = borrowedByMemberId;
-    }
-    public void setBorrowedByMemberName(String borrowedByMemberName) {
-        this.borrowedByMemberName = borrowedByMemberName;
-    }
-    public void setBorrowDate(LocalDate borrowDate) {
-        this.borrowDate = borrowDate;
-    }
 
     // Kitap ödünç verme ve iade metodları
     public void setBorrowedBy(Integer memberId, String memberName) {

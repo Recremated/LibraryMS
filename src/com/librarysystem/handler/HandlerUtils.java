@@ -389,10 +389,6 @@ public class HandlerUtils {
             System.out.println("✅ This book is available in the library.");
         }
     }
-    // Additional utility method to check book availability
-    public static boolean isBookAvailable(Book book) {
-        return book != null && "Available".equals(book.getStatus());
-    }
 
     // Method to get detailed book status
     public static void showBookStatus(Book book) {

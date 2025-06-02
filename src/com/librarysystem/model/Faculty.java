@@ -21,21 +21,7 @@ public class Faculty extends MemberRecord {
         setMaxBookLimit(10);
     }
 
-    // Getters and Setters
-    public String getEmployeeId() { return employeeId; }
-    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
-
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
-
     public String getPosition() { return position; }
-    public void setPosition(String position) { this.position = position; }
-
-    public String getSpecialization() { return specialization; }
-    public void setSpecialization(String specialization) { this.specialization = specialization; }
-
-    public int getYearsOfExperience() { return yearsOfExperience; }
-    public void setYearsOfExperience(int yearsOfExperience) { this.yearsOfExperience = yearsOfExperience; }
 
     @Override
     public void displayMemberInfo() {

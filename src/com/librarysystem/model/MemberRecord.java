@@ -39,17 +39,11 @@ public class MemberRecord implements Serializable {
     public Integer getMemberId() { return memberId; }
     public String getName() { return name; }
     public String getType() { return type; }
-    public String getDateOfMembership() { return dateOfMembership; }
-    public String getAddress() { return address; }
-    public String getPhoneNo() { return phoneNo; }
     public int getMaxBookLimit() { return maxBookLimit; }
 
     // Setters
     public void setMaxBookLimit(int maxBookLimit) { this.maxBookLimit = maxBookLimit; }
     public void setName(String name) { this.name = name; }
-    public void setAddress(String address) { this.address = address; }
-    public void setPhoneNo(String phoneNo) { this.phoneNo = phoneNo; }
-
     // Display method that can be overridden
     public void displayMemberInfo() {
         System.out.println("=== Member Information ===");

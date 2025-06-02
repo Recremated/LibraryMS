@@ -30,27 +30,6 @@ public class Reader extends Person {
         }
     }
 
-    // Üyenin aldığı tüm kitapları göster
-    public void displayBorrowedBooks() {
-        if (books.isEmpty()) {
-            System.out.println("📚 " + name + " has no borrowed books.");
-        } else {
-            System.out.println("📚 Books borrowed by " + name + ":");
-            for (int i = 0; i < books.size(); i++) {
-                Book book = books.get(i);
-                System.out.println((i + 1) + ". " + book.getName() + " (ID: " + book.getBookID() + ")");
-            }
-        }
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public int getMemberId() {
-        return memberId;
-    }
-
     @Override
     public void whoYouAre() {
         System.out.println("I am a Reader. My name is " + name + " (ID: " + memberId + ")");

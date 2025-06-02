@@ -45,10 +45,6 @@ public class Librarian {
         System.out.println("Book returned by " + reader.getName());
     }
 
-    public double calculateFine(int overdueDays) {
-        return overdueDays * 2.0; // örnek: her gün için 2 TL ceza
-    }
-
     public void createBill(Book book, Reader reader) {
         System.out.println("💳 Bill for " + reader.getName() + ":");
         System.out.println("Book: " + book.getName());

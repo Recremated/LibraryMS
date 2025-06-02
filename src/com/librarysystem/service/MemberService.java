@@ -33,25 +33,6 @@ public class MemberService {
         return memberMap.get(memberId);
     }
 
-    public Student getStudent(int memberId) {
-        MemberRecord member = memberMap.get(memberId);
-        return (member instanceof Student) ? (Student) member : null;
-    }
-
-    public Faculty getFaculty(int memberId) {
-        MemberRecord member = memberMap.get(memberId);
-        return (member instanceof Faculty) ? (Faculty) member : null;
-    }
-
-    public void payBill(int memberId, double amount) {
-        MemberRecord member = memberMap.get(memberId);
-        if (member != null) {
-            System.out.println("Bill paid by " + member.getName() + ": $" + amount);
-        } else {
-            System.out.println("Member not found.");
-        }
-    }
-
     public void showMemberDetails(int memberId) {
         MemberRecord member = memberMap.get(memberId);
         if (member != null) {
