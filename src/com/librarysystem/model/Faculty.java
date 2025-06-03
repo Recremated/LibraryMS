@@ -35,7 +35,6 @@ public class Faculty extends MemberRecord {
 
     // Faculty-specific methods
     public boolean canReserveBooks() {
-        // Faculty can reserve books in advance
         return true;
     }
 

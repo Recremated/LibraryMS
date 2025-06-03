@@ -13,7 +13,6 @@ public class Librarian {
         return member.canIssue();
     }
 
-    // Updated Librarian.java - issueBook method with better validation
     public void issueBook(Book book, Reader reader, MemberRecord record) {
         // Double-check member eligibility
         if (!verifyMember(record)) {
