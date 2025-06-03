@@ -14,11 +14,9 @@ public class Student extends MemberRecord {
         this.department = department;
         this.semester = semester;
         this.degree = degree;
-        // Students have standard book limit (5)
         setMaxBookLimit(5);
     }
 
-    // Getters and Setters
     public String getStudentId() { return studentId; }
 
     @Override
@@ -30,7 +28,6 @@ public class Student extends MemberRecord {
         System.out.println("Degree: " + degree);
     }
 
-    // Student-specific methods
     public boolean isEligibleForExtendedLoan() {
         // PhD students can borrow books for longer periods
         return "PhD".equalsIgnoreCase(degree);

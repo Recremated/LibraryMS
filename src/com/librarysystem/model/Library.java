@@ -10,13 +10,11 @@ public class Library {
     private List<Book> books;
     private List<Reader> readers;
 
-    // Private constructor to prevent instantiation
     private Library() {
         books = new ArrayList<>();
         readers = new ArrayList<>();
     }
 
-    // Thread-safe Singleton getInstance method
     public static Library getInstance() {
         if (instance == null) {
             synchronized (lock) {

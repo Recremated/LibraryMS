@@ -30,10 +30,10 @@ public class MenuHandler {
                 case 9 -> HandlerUtils.updateBook(bookService);
                 case 10 -> HandlerUtils.deleteBook(bookService);
                 case 11 -> showMemberDetailsMenu(memberService);
-                case 12 -> HandlerUtils.listBorrowedBooks(bookService); // YENİ
-                case 13 -> HandlerUtils.showMemberBorrowedBooks(memberService); // YENİ
-                case 14 -> HandlerUtils.searchWhoHasBook(bookService); // YENİ
-                case 15 -> HandlerUtils.searchBookWithAvailability(bookService); // NEW CASE
+                case 12 -> HandlerUtils.listBorrowedBooks(bookService);
+                case 13 -> HandlerUtils.showMemberBorrowedBooks(memberService);
+                case 14 -> HandlerUtils.searchWhoHasBook(bookService);
+                case 15 -> HandlerUtils.searchBookWithAvailability(bookService);
 
                 case 0 -> {
                     System.out.println("💾 Saving data and exiting... Bye!");

@@ -15,14 +15,12 @@ public class Reader extends Person {
 
     public void borrowBook(Book book) {
         books.add(book);
-        // Yeni metodu kullan - kitabı kimin aldığını kaydet
         book.setBorrowedBy(this.memberId, this.name);
         System.out.println("✅ " + name + " borrowed the book: " + book.getName());
     }
 
     public void returnBook(Book book) {
         if (books.remove(book)) {
-            // Yeni metodu kullan - kitap iade bilgilerini temizle
             book.returnBook();
             System.out.println("✅ " + name + " returned the book: " + book.getName());
         } else {

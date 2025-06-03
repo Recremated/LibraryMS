@@ -39,18 +39,6 @@ public class Faculty extends MemberRecord {
         return true;
     }
 
-    public boolean isEligibleForInterlibraryLoan() {
-        // Senior faculty can request books from other libraries
-        return yearsOfExperience >= 5 ||
-                "Professor".equalsIgnoreCase(position) ||
-                "Associate Professor".equalsIgnoreCase(position);
-    }
-
-    public int getMaxReservationDays() {
-        // Faculty can keep reserved books longer
-        return 30;
-    }
-
     public double getFineExemptionRate() {
         return switch (position.toLowerCase()) {
             case "professor" -> 1.0; // 100% exemption
