@@ -1,0 +1,270 @@
+classDiagram
+%% Abstract Classes and Interfaces
+class Person {
+<<abstract>>
+#String name
++Person(String name)
++String getName()
++whoYouAre()* void
+}
+
+    class Book {
+        <<abstract>>
+        -String bookID
+        -Author author
+        -String name
+        -double price
+        -String status
+        -int edition
+        -LocalDate dateOfPurchase
+        -Integer borrowedByMemberId
+        -String borrowedByMemberName
+        -LocalDate borrowDate
+        +Book(String, String, String, double, int, LocalDate)
+        +getBookID() String
+        +getAuthor() Author
+        +getName() String
+        +getPrice() double
+        +getStatus() String
+        +getBorrowedByMemberId() Integer
+        +getBorrowedByMemberName() String
+        +getBorrowDate() LocalDate
+        +setPrice(double) void
+        +setBorrowedBy(Integer, String) void
+        +returnBook() void
+        +display() void
+    }
+
+    %% Concrete Book Classes
+    class StudyBooks {
+        +StudyBooks(String, String, String, double, int, LocalDate)
+    }
+
+    class Journals {
+        +Journals(String, String, String, double, int, LocalDate)
+    }
+
+    class Magazines {
+        +Magazines(String, String, String, double, int, LocalDate)
+    }
+
+    %% Person Subclasses
+    class Author {
+        -List~Book~ books
+        +Author(String name)
+        +addBook(Book) void
+        +getBooks() List~Book~
+        +whoYouAre() void
+    }
+
+    class Reader {
+        -List~Book~ books
+        -int memberId
+        +Reader(String, int)
+        +borrowBook(Book) void
+        +returnBook(Book) void
+        +whoYouAre() void
+    }
+
+    %% Member Classes
+    class MemberRecord {
+        -int memberId
+        -String type
+        -String dateOfMembership
+        #int maxBookLimit
+        -int booksIssued
+        -String name
+        -String address
+        -String phoneNo
+        +MemberRecord(int, String, String, String, String, String)
+        +canIssue() boolean
+        +issueBook() void
+        +returnBook() void
+        +getBooksIssued() int
+        +getMemberId() Integer
+        +getName() String
+        +getMaxBookLimit() int
+        +setMaxBookLimit(int) void
+        +displayMemberInfo() void
+    }
+
+    class Student {
+        -String studentId
+        -String department
+        -int semester
+        -String degree
+        +Student(int, String, String, String, String, String, String, int, String)
+        +getStudentId() String
+        +isEligibleForExtendedLoan() boolean
+        +getDiscountRate() double
+        +displayMemberInfo() void
+    }
+
+    class Faculty {
+        -String employeeId
+        -String department
+        -String position
+        -String specialization
+        -int yearsOfExperience
+        +Faculty(int, String, String, String, String, String, String, String, String, int)
+        +getPosition() String
+        +canReserveBooks() boolean
+        +isEligibleForInterlibraryLoan() boolean
+        +getMaxReservationDays() int
+        +getFineExemptionRate() double
+        +displayMemberInfo() void
+    }
+
+    %% Core System Classes
+    class Library {
+        <<Singleton>>
+        -Library instance
+        -Object lock
+        -List~Book~ books
+        -List~Reader~ readers
+        -Library()
+        +getInstance() Library
+        +addBook(Book) void
+        +removeBook(String) void
+        +searchBookByID(String) Book
+        +searchBooksByAuthor(String) List~Book~
+        +getBooks() List~Book~
+        +getReaders() List~Reader~
+        +displayAllBooks() void
+        +setBooks(List~Book~) void
+    }
+
+    class Librarian {
+        -String name
+        -String password
+        +Librarian(String, String)
+        +verifyMember(MemberRecord) boolean
+        +issueBook(Book, Reader, MemberRecord) void
+        +returnBook(Book, Reader, MemberRecord) void
+        +createBill(Book, Reader) void
+        +refund(Book, Reader) void
+        +getName() String
+        +checkPassword(String) boolean
+    }
+
+    %% Service Classes
+    class BookService {
+        -Library library
+        +BookService(Library)
+        +addBook(Book) void
+        +removeBookById(String) void
+        +updateBookPrice(String, double) void
+        +listBooksByAuthor(String) void
+        +listBooksByCategory(Class) void
+        +listAllBooks() void
+        +findBookById(String) Book
+    }
+
+    class MemberService {
+        -Map~Integer, MemberRecord~ memberMap
+        +MemberService()
+        +registerMember(MemberRecord) void
+        +registerStudent(Student) void
+        +registerFaculty(Faculty) void
+        +getMember(int) MemberRecord
+        +showMemberDetails(int) void
+        +listAllStudents() void
+        +listAllFaculty() void
+        +setMemberMap(Map) void
+        +getMemberMap() Map~Integer, MemberRecord~
+    }
+
+    %% Data Management
+    class DataManager {
+        <<Singleton>>
+        -DataManager instance
+        -Object lock
+        -DataManager()
+        +getInstance() DataManager
+        +saveBooks(List~Book~, String) void
+        +loadBooks(String) List~Book~
+        +saveMembers(Map~Integer, MemberRecord~, String) void
+        +loadMembers(String) Map~Integer, MemberRecord~
+        +checkFileStatus(String) void
+    }
+
+    %% Handler Classes
+    class LoginHandler {
+        +login(Librarian) boolean
+    }
+
+    class MenuHandler {
+        +runMainMenu(Library, BookService, MemberService, Librarian) void
+        -showMenu() void
+        -showMemberDetailsMenu(MemberService) void
+        -getInt(String) int
+    }
+
+    class HandlerUtils {
+        +addBook(BookService) void
+        +registerMember(MemberService) void
+        +registerStudent(MemberService) void
+        +registerFaculty(MemberService) void
+        +borrowBook(Library, BookService, MemberService, Librarian) void
+        +returnBook(Library, BookService, MemberService, Librarian) void
+        +searchBookByID(BookService) void
+        +listBooksByAuthor(BookService) void
+        +listBooksByCategory(BookService) void
+        +updateBook(BookService) void
+        +deleteBook(BookService) void
+        +listBorrowedBooks(BookService) void
+        +showMemberBorrowedBooks(MemberService) void
+        +searchWhoHasBook(BookService) void
+        +searchBookWithAvailability(BookService) void
+    }
+
+    %% Main Application
+    class LibraryApp {
+        +main(String[]) void
+    }
+
+    class Main {
+        +main(String[]) void
+    }
+
+    %% Inheritance Relationships
+    Person <|-- Author
+    Person <|-- Reader
+    Book <|-- StudyBooks
+    Book <|-- Journals
+    Book <|-- Magazines
+    MemberRecord <|-- Student
+    MemberRecord <|-- Faculty
+
+    %% Composition and Aggregation
+    Book *-- Author : contains
+    Author o-- Book : writes
+    Reader o-- Book : borrows
+    Library o-- Book : manages
+    Library o-- Reader : tracks
+    BookService --> Library : uses
+    MemberService o-- MemberRecord : manages
+    Librarian --> Book : issues/returns
+    Librarian --> Reader : interacts
+    Librarian --> MemberRecord : verifies
+
+    %% Dependencies
+    HandlerUtils ..> BookService : uses
+    HandlerUtils ..> MemberService : uses
+    HandlerUtils ..> Library : uses
+    HandlerUtils ..> Librarian : uses
+    MenuHandler ..> HandlerUtils : calls
+    LoginHandler ..> Librarian : authenticates
+    LibraryApp ..> DataManager : uses
+    LibraryApp ..> Library : uses
+    LibraryApp ..> BookService : creates
+    LibraryApp ..> MemberService : creates
+    LibraryApp ..> Librarian : creates
+    LibraryApp ..> LoginHandler : uses
+    LibraryApp ..> MenuHandler : uses
+
+    %% Serialization
+    Person ..|> Serializable
+    Book ..|> Serializable  
+    MemberRecord ..|> Serializable
+    Author ..|> Serializable

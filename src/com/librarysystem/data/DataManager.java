@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class DataManager {
-    private static DataManager instance;
+    private static volatile DataManager instance;
     private static final Object lock = new Object();
 
     private DataManager() {}

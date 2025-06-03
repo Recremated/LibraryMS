@@ -52,9 +52,11 @@ public class Faculty extends MemberRecord {
     }
 
     public double getFineExemptionRate() {
-        // Senior faculty get fine exemptions
-        if ("Professor".equalsIgnoreCase(position)) return 1.0; // 100% exemption
-        if ("Associate Professor".equalsIgnoreCase(position)) return 0.8; // 80% exemption
-        return 0.0; // No exemption for others
+        return switch (position.toLowerCase()) {
+            case "professor" -> 1.0; // 100% exemption
+            case "associate professor" -> 0.8; // 80% exemption
+            case "assistant professor" -> 0.5; // 50% exemption
+            default -> 0.0; // No exemption for others
+        };
     }
 }
